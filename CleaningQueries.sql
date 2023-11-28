@@ -97,7 +97,26 @@ SET SoldAsVacant =
 
 -- Remove Duplicates
 
+WITH DuplicateCTE AS (
+SELECT *,
+	ROW_NUMBER() over(
+	PARTITION BY parcelID,
+				 LandUse,
+				 SaleDate,
+				 SalePrice,
+				 LegalReference
+				 ORDER BY UniqueID
+				 ) RN
+
+FROM NashvilleHousing
+)
+--SELECT *
+DELETE
+FROM DuplicateCTE
+WHERE RN >= 2
 
 
+-- Drop Redundant Columns
 
-
+ALTER TABLE NashvilleHousing
+DROP COLUMN PropertyAddress,OwnerAddress
